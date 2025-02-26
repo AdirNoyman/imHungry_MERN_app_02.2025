@@ -1,5 +1,5 @@
-import landingImage from '../../public/assets/landing.png'
-import appDownLoad from '../../public/assets/appDownload.png'
+import landingImage from '../assets/landing.png'
+import appDownLoad from '../assets/appDownload.png'
 const HomePage = () => {
   return (
     <div className="flex flex-col gap-12 max-sm:mx-4">

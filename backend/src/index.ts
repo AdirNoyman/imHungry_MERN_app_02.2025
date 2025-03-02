@@ -2,6 +2,7 @@ import express, {Request, Response} from 'express';
 import cors from 'cors';
 import "dotenv/config";
 import mongoose from 'mongoose';
+import userRoutes from './routes/UserRoutes'
 
 const app = express();
 
@@ -13,10 +14,7 @@ app.use(cors());
 // Convert the body of the request  to JSON
 app.use(express.json());
 
-
-app.get('/', async (req: Request, res: Response) => {
-  res.json({message: 'Hello World'});
-})
+app.use("/api/v1/users", userRoutes)
 
 // Start the server
 const PORT = process.env.PORT || 5001;

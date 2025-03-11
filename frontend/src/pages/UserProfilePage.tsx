@@ -1,9 +1,9 @@
-import UserProfileForm from "@/forms/user-profile-form/UserProfileForm"
+import { useUpdateUser } from '@/api/UserApi';
+import UserProfileForm from '@/forms/user-profile-form/UserProfileForm';
 
 const UserProfilePage = () => {
-  return (
-    <UserProfileForm />
-  )
-}
+  const { updateUser, isLoading } = useUpdateUser();
+  return <UserProfileForm onSave={updateUser} isLoading={isLoading} />;
+};
 
-export default UserProfilePage
+export default UserProfilePage;

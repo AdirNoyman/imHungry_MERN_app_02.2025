@@ -25,10 +25,11 @@ export const useCreateUser = () => {
     // Check if the backend response is ok (created the user in the DB)
     if (!response.ok) {
       throw new Error('Failed to create the user in the app DB 😫');
-    }
+    }   
   };
 
   const {
+    // createUser is the name we give the mutation we make (createUserRequest)
     mutateAsync: createUser,
     isLoading,
     isError,
@@ -40,5 +41,52 @@ export const useCreateUser = () => {
     isLoading,
     isError,
     isSuccess,
+  };
+};
+
+type UpdateUserRequest = {
+  name: string;
+  address: string;
+  city: string;
+  country: string;
+};
+
+export const useUpdateUser = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const updateUserRequest = async (formData: UpdateUserRequest) => {
+    const accessToken = await getAccessTokenSilently();
+    const response = await fetch(`${API_BASE_URL}/api/v1/users`, {
+      method: 'PUT',
+      headers: {        
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    // Check if the backend response is ok (updated the user in the DB)
+    if (!response.ok) {
+      throw new Error('Failed to update the user in the app DB 😫');
+    }
+
+    return response.json();
+  };
+
+  const {
+    // updateUser is the name we give the mutation we make (updateUserRequest)
+    mutateAsync: updateUser,
+    isLoading,
+    isError,
+    isSuccess,
+    reset
+  } = useMutation(updateUserRequest);
+
+  return {
+    updateUser,
+    isLoading,
+    isError,
+    isSuccess,
+    reset
   };
 };

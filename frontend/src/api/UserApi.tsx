@@ -1,8 +1,45 @@
+import { User } from '@/types/User';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { toast } from 'sonner';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+export const useGetUserProfileData = () => {
+  const { getAccessTokenSilently } = useAuth0();
+
+  const getUserDataRequest = async (): Promise<User> => {
+    const accessToken = await getAccessTokenSilently();
+    const response = await fetch(`${API_BASE_URL}/api/v1/users`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: 'application/json',
+      },
+    });
+
+    // Check if the backend response is ok
+    if (!response.ok) {
+      throw new Error('Failed to get the user data 😫');
+    }
+    return response.json();
+  };
+
+  const {
+    data: currentUserData,
+    isLoading,
+    error,
+  } = useQuery('fetchLoggedInUserData', getUserDataRequest);
+
+  if (error) {
+    console.log('Error getting user data:', error.toString());
+
+    toast.error('Sorry, failed to your profile data 🤷‍♂️. Please try again');
+    // Clear the error state so it won't keep appearing in future error events
+  }
+
+  return { currentUserData, isLoading };
+};
 
 type CreateUserRequest = {
   auth0Id: string;
@@ -26,7 +63,7 @@ export const useCreateUser = () => {
     // Check if the backend response is ok (created the user in the DB)
     if (!response.ok) {
       throw new Error('Failed to create the user in the app DB 😫');
-    }   
+    }
   };
 
   const {
@@ -59,7 +96,7 @@ export const useUpdateUser = () => {
     const accessToken = await getAccessTokenSilently();
     const response = await fetch(`${API_BASE_URL}/api/v1/users`, {
       method: 'PUT',
-      headers: {        
+      headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
@@ -80,21 +117,19 @@ export const useUpdateUser = () => {
     isLoading,
     error,
     isSuccess,
-    reset
+    reset,
   } = useMutation(updateUserRequest);
 
   if (isSuccess) {
-
-    toast.success("Your profile was updated successfully 🤓🤘")
+    toast.success('Your profile was updated successfully 🤓🤘');
   }
 
   if (error) {
+    console.log('Error updating the profile:', error.toString());
 
-    console.log("Error updating the profile:",error.toString())
-
-    toast.error("Sorry, update failed 🤷‍♂️. Please try again")
+    toast.error('Sorry, update failed 🤷‍♂️. Please try again');
     // Clear the error state so it won't keep appearing in future error events
-    reset()
+    reset();
   }
 
   return {
@@ -102,6 +137,6 @@ export const useUpdateUser = () => {
     isLoading,
     error,
     isSuccess,
-    reset
+    reset,
   };
 };

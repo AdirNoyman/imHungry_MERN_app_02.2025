@@ -31,8 +31,25 @@ const createUser = async (req: Request, res: Response) => {
   }
 };
 
+// Get logged in user data
+const getLoggedInUser = async (req: Request, res: Response) => {
+  try {
+    // Find the user in our DB by using the mongoDb user Id
+    const user = await User.findOne({ _id: req.userId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found 😫' });
+    }
+    res.json(user);
+    
+  } catch (error) {
+    console.log('Error getting user profile data', error);
+    return res.status(500).json({ message: 'Error getting user data 🤷‍♂️' });
+  }
+};
+
 // Update user (profile)
-const updateUser= async (req: Request, res: Response) => {
+const updateUser = async (req: Request, res: Response) => {
   try {
     // Get the user form data
     const { name, address, country, city } = req.body;
@@ -49,14 +66,14 @@ const updateUser= async (req: Request, res: Response) => {
 
     await user.save();
     res.send(user);
-
   } catch (error) {
-    console.log('Error updating user profile');
+    console.log('Error updating user profile', error);
     return res.status(500).json({ message: 'Error updating user 🤷‍♂️' });
   }
 };
 
 export default {
   createUser,
-  updateUser
+  getLoggedInUser,
+  updateUser,
 };

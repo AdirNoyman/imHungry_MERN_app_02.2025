@@ -13,6 +13,8 @@ import {
 import { Input } from '@/components/ui/input';
 import LoadingButton from '@/components/LoadingButton';
 import { Button } from '@/components/ui/button';
+import { User } from '@/types/User';
+import { useEffect } from 'react';
 
 const formSchema = z.object({
   email: z.string().optional(),
@@ -25,14 +27,22 @@ const formSchema = z.object({
 type UserFormData = z.infer<typeof formSchema>;
 
 type Props = {
+  currentUserData: User;
   onSave: (userProfileData: UserFormData) => void;
   isLoading: boolean;
 };
 
-const UserProfileForm = ({ onSave, isLoading }: Props) => {
+const UserProfileForm = ({ onSave, isLoading,currentUserData }: Props) => {
   const form = useForm<UserFormData>({
     resolver: zodResolver(formSchema),
+    // defaultValues = the user current profile data we got from the backend to display when the profile form loads
+    defaultValues: currentUserData
   });
+
+  useEffect(() => {
+    // If the form rerenders or the user data changes, the form will display the current user data
+    form.reset(currentUserData)
+  }, [currentUserData, form])
 
   // by passing '...form' is all the form variables we defined above, we pass to the shadcn ui form
   return (

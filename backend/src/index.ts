@@ -14,6 +14,11 @@ app.use(cors());
 // Convert the body of the request  to JSON
 app.use(express.json());
 
+// Deployment health check service
+app.get("/health", async (req: Request, res: Response) => {
+  res.send({message: "Health ok - server is up and running 🤓🤘"});
+})
+// Routes
 app.use("/api/v1/users", userRoutes)
 
 // Start the server

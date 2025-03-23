@@ -3,6 +3,7 @@ import cors from 'cors';
 import "dotenv/config";
 import mongoose from 'mongoose';
 import userRoutes from './routes/UserRoutes'
+import restaurantRoutes from './routes/RestaurantRoutes'
 import { v2 as cloudinary } from 'cloudinary'
 
 const app = express();
@@ -28,6 +29,7 @@ app.get("/health", async (req: Request, res: Response) => {
 })
 // Routes
 app.use("/api/v1/users", userRoutes)
+app.use("/api/v1/restaurant", restaurantRoutes)
 
 // Start the server
 const PORT = process.env.PORT || 5001;
